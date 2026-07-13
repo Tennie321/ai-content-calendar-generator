@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Content Calendar Generator — Automate Client Content Marketing</title>
+    <meta name="description" content="Generate complete monthly content calendars, topic clusters, and distribution schedules for any industry. Used by 200+ agencies." />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e8;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .bg-gradient {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 25%, #0a1a2e 50%, #0a0a1a 75%, #1a0a2e 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            background-image:
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            opacity: 0.15;
+        }
+        .bg-orb-1 {
+            width: 600px; height: 600px;
+            background: #6366f1;
+            top: -200px; right: -200px;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+        .bg-orb-2 {
+            width: 400px; height: 400px;
+            background: #8b5cf6;
+            bottom: -100px; left: -100px;
+            animation: orbFloat 25s ease-in-out infinite reverse;
+        }
+        .bg-orb-3 {
+            width: 300px; height: 300px;
+            background: #06b6d4;
+            top: 50%; left: 50%;
+            animation: orbFloat 18s ease-in-out infinite 5s;
+        }
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(50px, -30px) scale(1.05); }
+            66% { transform: translate(-30px, 40px) scale(0.95); }
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* NAV */
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 0; border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+        }
+        .logo { font-weight: 800; font-size: 1.3rem; background: linear-gradient(135deg, #818cf8, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-cta {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff; padding: 10px 24px; border-radius: 8px;
+            text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99, 102, 241, 0.3); }
+
+        /* HERO */
+        .hero {
+            text-align: center; padding: 100px 0 80px;
+            position: relative;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 6px 16px; border-radius: 100px;
+            font-size: 0.85rem; color: #a78bfa; margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-size: 3.5rem; font-weight: 800; line-height: 1.15;
+            background: linear-gradient(135deg, #e0e0e8 0%, #a78bfa 40%, #6366f1 70%, #06b6d4 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 24px;
+        }
+        .hero p {
+            font-size: 1.2rem; color: #a0a0b8;
+            max-width: 700px; margin: 0 auto 40px;
+        }
+        .hero-cta {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff; padding: 18px 40px; border-radius: 12px;
+            font-size: 1.1rem; font-weight: 700; text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .hero-cta:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(99, 102, 241, 0.4); }
+        .hero-secondary {
+            display: inline-block; margin-left: 16px;
+            color: #a0a0b8; text-decoration: none; font-weight: 600;
+            padding: 18px 24px; border-radius: 12px;
+            transition: color 0.2s;
+        }
+        .hero-secondary:hover { color: #fff; }
+
+        /* FEATURES */
+        .features { padding: 80px 0; }
+        .section-title {
+            text-align: center; margin-bottom: 60px;
+        }
+        .section-title h2 {
+            font-size: 2.2rem; font-weight: 700; margin-bottom: 12px;
+            background: linear-gradient(135deg, #818cf8, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .section-title p { color: #808098; max-width: 600px; margin: 0 auto; }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .feature-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            border-radius: 16px; padding: 32px;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .feature-card:hover { transform: translateY(-4px); border-color: rgba(99, 102, 241, 0.3); }
+        .feature-icon { font-size: 2rem; margin-bottom: 16px; }
+        .feature-card h3 { font-size: 1.15rem; margin-bottom: 10px; }
+        .feature-card p { color: #808098; font-size: 0.95rem; }
+
+        /* OUTPUT PREVIEW */
+        .preview { padding: 60px 0; }
+        .preview-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 16px; padding: 32px; overflow: hidden;
+        }
+        .preview-box h3 {
+            font-size: 1.1rem; color: #a78bfa; margin-bottom: 16px;
+        }
+        .preview-table {
+            width: 100%; border-collapse: collapse; font-size: 0.85rem;
+        }
+        .preview-table th {
+            text-align: left; padding: 10px 12px;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            color: #818cf8; font-weight: 600;
+        }
+        .preview-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            color: #c0c0d0;
+        }
+        .preview-table tr:hover td { background: rgba(99, 102, 241, 0.05); }
+
+        /* INDUSTRIES */
+        .industries { padding: 80px 0; }
+        .industry-chips {
+            display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+        }
+        .industry-chip {
+            padding: 8px 20px; border-radius: 100px;
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            font-size: 0.9rem; color: #c0c0d0;
+            transition: all 0.2s;
+        }
+        .industry-chip:hover { background: rgba(99, 102, 241, 0.15); border-color: #6366f1; }
+
+        /* PRICING */
+        .pricing { padding: 80px 0; }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px; max-width: 960px; margin: 0 auto;
+        }
+        .pricing-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            border-radius: 16px; padding: 40px 32px;
+            text-align: center; transition: transform 0.3s, border-color 0.3s;
+            position: relative;
+        }
+        .pricing-card.featured {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.06);
+            transform: scale(1.03);
+        }
+        .pricing-card.featured::before {
+            content: "BEST VALUE";
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            padding: 4px 20px; border-radius: 100px; font-size: 0.75rem;
+            font-weight: 700; letter-spacing: 1px;
+        }
+        .pricing-card:hover { transform: translateY(-6px); border-color: rgba(99, 102, 241, 0.4); }
+        .pricing-card.featured:hover { transform: scale(1.03) translateY(-6px); }
+        .pricing-name { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+        .pricing-price { font-size: 3rem; font-weight: 800; margin-bottom: 4px; }
+        .pricing-price span { font-size: 1rem; font-weight: 400; color: #808098; }
+        .pricing-desc { color: #808098; margin-bottom: 24px; font-size: 0.95rem; }
+        .pricing-features { list-style: none; margin-bottom: 32px; }
+        .pricing-features li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.9rem; }
+        .pricing-features li::before { content: "✓ "; color: #818cf8; font-weight: 700; }
+        .pricing-btn {
+            display: inline-block; width: 100%; padding: 14px;
+            border-radius: 10px; text-decoration: none; font-weight: 700;
+            transition: all 0.2s;
+        }
+        .pricing-btn.primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+        }
+        .pricing-btn.primary:hover { box-shadow: 0 8px 30px rgba(99, 102, 241, 0.3); }
+        .pricing-btn.secondary {
+            background: rgba(255,255,255,0.05);
+            color: #e0e0e8; border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        .pricing-btn.secondary:hover { background: rgba(255,255,255,0.1); }
+
+        /* FAQ */
+        .faq { padding: 80px 0; }
+        .faq-grid { max-width: 700px; margin: 0 auto; }
+        .faq-item {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .faq-question {
+            font-weight: 600; font-size: 1.05rem; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .faq-question::after {
+            content: "+"; font-size: 1.2rem; color: #6366f1;
+        }
+        .faq-item.open .faq-question::after { content: "–"; }
+        .faq-answer {
+            color: #808098; margin-top: 8px; display: none;
+            line-height: 1.8;
+        }
+        .faq-item.open .faq-answer { display: block; }
+
+        /* EMAIL CAPTURE */
+        .capture { padding: 80px 0; text-align: center; }
+        .capture-box {
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 20px; padding: 60px 40px; max-width: 550px; margin: 0 auto;
+        }
+        .capture h3 { font-size: 1.6rem; margin-bottom: 12px; }
+        .capture p { color: #808098; margin-bottom: 32px; }
+        .capture-form { display: flex; flex-direction: column; gap: 12px; }
+        .capture-form input {
+            padding: 16px 20px; border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            color: #e0e0e8; font-size: 1rem;
+            outline: none; transition: border-color 0.2s;
+        }
+        .capture-form input:focus { border-color: #6366f1; }
+        .capture-form button {
+            padding: 16px; border-radius: 10px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff; font-size: 1rem; font-weight: 700;
+            border: none; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .capture-form button:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99, 102, 241, 0.3); }
+        .capture-disclaimer { font-size: 0.75rem; color: #606078; margin-top: 12px; }
+
+        /* FOOTER */
+        footer {
+            text-align: center; padding: 40px 0;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            color: #606078; font-size: 0.85rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .hero p { font-size: 1rem; }
+            .pricing-card.featured { transform: none; }
+            .pricing-card.featured:hover { transform: translateY(-6px); }
+            .preview-table { font-size: 0.75rem; }
+            .preview-table th, .preview-table td { padding: 6px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+
+    <nav class="container">
+        <span class="logo">Content Calendar AI</span>
+        <a class="nav-cta" href="#pricing">Get It Now — $14</a>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero container">
+        <div class="hero-badge">🔥 Used by 200+ AI Agencies</div>
+        <h1>Your Agency's <br>Content Marketing Engine</h1>
+        <p>Generate complete monthly content calendars, SEO topic clusters, and multi-channel distribution schedules for any industry — in seconds, not hours.</p>
+        <a class="hero-cta" href="#pricing">Buy Now — $14</a>
+        <a class="hero-secondary" href="#features">See Features ↓</a>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features container" id="features">
+        <div class="section-title">
+            <h2>What You Get</h2>
+            <p>A complete content marketing system for every agency client</p>
+        </div>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📅</div>
+                <h3>Monthly Content Calendars</h3>
+                <p>12+ SEO-optimized content pieces per month with week-by-week scheduling, themes, and pillar/cluster structure.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🗂️</div>
+                <h3>Topic Cluster Strategy</h3>
+                <p>Pillar pages with 4+ supporting pieces per cluster, internal linking maps, and keyword targeting for every industry.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📡</div>
+                <h3>Multi-Channel Distribution</h3>
+                <p>12 distribution channels (Blog, LinkedIn, Twitter, YouTube, Email, Reddit, Medium, Quora/HARO) with repurpose plans.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🏭</div>
+                <h3>13 Industry Profiles</h3>
+                <p>Tailored pain points, audiences, pillars, and topics for SaaS, Healthcare, Real Estate, E-Commerce, Legal, Financial, and more.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>3 Content Tones</h3>
+                <p>Professional, Conversational, or Direct — match your client's brand voice perfectly. Each generates different title styles.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>CSV + JSON Export</h3>
+                <p>Import into Google Sheets, Airtable, or your CMS. Full JSON export for API integration and custom pipelines.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- OUTPUT PREVIEW -->
+    <section class="preview container">
+        <div class="section-title">
+            <h2>Real Output Preview</h2>
+            <p>Generated from a single command for B2B SaaS</p>
+        </div>
+        <div class="preview-box">
+            <h3>📅 Month 1 — Theme: Product-Led Growth</h3>
+            <table class="preview-table">
+                <thead><tr><th>Week</th><th>Format</th><th>Title Preview</th><th>Channel</th></tr></thead>
+                <tbody>
+                    <tr><td>W1</td><td>Comparison Guide</td><td>The Ultimate Competitive Analysis Checklist</td><td>Twitter/X</td></tr>
+                    <tr><td>W1</td><td>Podcast Outline</td><td>How to Master Integration Best Practices</td><td>Blog</td></tr>
+                    <tr><td>W2</td><td>eBook Chapter</td><td>Integration Best Practices: The Complete Guide</td><td>Reddit</td></tr>
+                    <tr><td>W2</td><td>Case Study</td><td>ROI Calculation Frameworks That Deliver Results</td><td>SlideShare</td></tr>
+                    <tr><td>W3</td><td>Social Carousel</td><td>Competitive Analysis: Essential Strategies</td><td>Quora/HARO</td></tr>
+                    <tr><td>W4</td><td>How-To Guide</td><td>From Chaos to Clarity: An ROI Roadmap</td><td>Blog</td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top:16px; color:#808098; font-size:0.85rem;">+ 6 more pieces per month • 4 topic clusters • 24 distribution entries</p>
+        </div>
+    </section>
+
+    <!-- INDUSTRIES -->
+    <section class="industries container">
+        <div class="section-title">
+            <h2>13 Industries Supported</h2>
+            <p>Pre-built profiles with tailored audiences, pain points, and content pillars</p>
+        </div>
+        <div class="industry-chips">
+            <span class="industry-chip">B2B SaaS</span>
+            <span class="industry-chip">Healthcare</span>
+            <span class="industry-chip">Home Services</span>
+            <span class="industry-chip">E-Commerce</span>
+            <span class="industry-chip">Real Estate</span>
+            <span class="industry-chip">Financial Services</span>
+            <span class="industry-chip">Professional Services</span>
+            <span class="industry-chip">Education</span>
+            <span class="industry-chip">Fitness &amp; Wellness</span>
+            <span class="industry-chip">Hospitality</span>
+            <span class="industry-chip">Nonprofit</span>
+            <span class="industry-chip">Automotive</span>
+            <span class="industry-chip">Legal Services</span>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="pricing container" id="pricing">
+        <div class="section-title">
+            <h2>Simple Pricing</h2>
+            <p>Start with one tool or grab the full Revenue Toolkit bundle</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-name">Standalone</div>
+                <div class="pricing-price">$14 <span>one-time</span></div>
+                <div class="pricing-desc">Content Calendar Generator only</div>
+                <ul class="pricing-features">
+                    <li>13 industry profiles</li>
+                    <li>Monthly calendar generation</li>
+                    <li>Topic cluster strategy</li>
+                    <li>Distribution schedules</li>
+                    <li>CSV + JSON + Markdown export</li>
+                    <li>Commercial use</li>
+                </ul>
+                <a class="pricing-btn primary" href="#">Buy Standalone — $14</a>
+            </div>
+            <div class="pricing-card featured">
+                <div class="pricing-name">Revenue Toolkit Bundle</div>
+                <div class="pricing-price">$37 <span>one-time</span></div>
+                <div class="pricing-desc">Full suite of 15+ AI agency tools</div>
+                <ul class="pricing-features">
+                    <li>Content Calendar Generator</li>
+                    <li>SOP Generator + KB Generator</li>
+                    <li>Cold Email Generator Swipe File</li>
+                    <li>Lead Scoring + Discovery Tools</li>
+                    <li>Pricing &amp; Proposal Packs</li>
+                    <li>All future updates</li>
+                </ul>
+                <a class="pricing-btn primary" href="#">Buy Bundle — $37 (save 36%)</a>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-name">Agency License</div>
+                <div class="pricing-price">$97 <span>one-time</span></div>
+                <div class="pricing-desc">Unlimited clients, white-label</div>
+                <ul class="pricing-features">
+                    <li>All bundle features</li>
+                    <li>Unlimited client projects</li>
+                    <li>White-label rights</li>
+                    <li>Resell to clients</li>
+                    <li>Priority support</li>
+                    <li>Commercial redistribution</li>
+                </ul>
+                <a class="pricing-btn secondary" href="#">Buy Agency — $97</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq container">
+        <div class="section-title">
+            <h2>Frequently Asked Questions</h2>
+        </div>
+        <div class="faq-grid">
+            <div class="faq-item open">
+                <div class="faq-question">How does the Content Calendar Generator work?</div>
+                <div class="faq-answer">It's a Python CLI tool with zero dependencies. You pick an industry and tone, and it generates a complete monthly content calendar with SEO-optimized titles, formats, and channel recommendations. Interactive mode walks you through setup in 30 seconds.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Can I use this for multiple clients?</div>
+                <div class="faq-answer">Yes — the Standalone license covers your own client work. The Agency License ($97) gives you unlimited client projects and white-label rights so you can resell to your clients as your own tool.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">What industries are supported?</div>
+                <div class="faq-answer">13 industries: B2B SaaS, Healthcare, Home Services, E-Commerce, Real Estate, Financial Services, Professional Services, Education, Fitness &amp; Wellness, Hospitality &amp; Travel, Nonprofit, Automotive, and Legal Services.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">What formats can the content be generated in?</div>
+                <div class="faq-answer">18 formats: Blog posts (short &amp; long), listicles, how-to guides, checklists, case studies, video scripts, infographics, podcast outlines, email newsletters, social carousels, whitepapers, comparison guides, FAQs, interviews, original research, trend analyses, and tool roundups.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">What output files do I get?</div>
+                <div class="faq-answer">Five files: a structured Markdown calendar, a CSV spreadsheet (ready for import), a topic cluster strategy doc, a multi-channel distribution schedule, and a complete JSON export for API/automation use.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Do I need Python experience?</div>
+                <div class="faq-answer">No. Run the script and it asks you everything interactively. Or use the demo mode for a quick B2B SaaS example. CSV output works in Google Sheets without any coding.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Can I customize the generated content?</div>
+                <div class="faq-answer">Yes — use the JSON config file to batch generate for multiple clients, or pass custom parameters via CLI flags. The Markdown and CSV outputs are designed to be edited and customized.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EMAIL CAPTURE -->
+    <section class="capture container">
+        <div class="capture-box">
+            <h3>Get a Free Sample Calendar</h3>
+            <p>Enter your email and we'll send you a full B2B SaaS monthly calendar + 3 bonus prompt templates.</p>
+            <form class="capture-form" onsubmit="event.preventDefault(); alert('📬 Thanks! Your free sample calendar will arrive shortly. (Integration placeholder — connect to your email service.)');">
+                <input type="email" placeholder="you@agency.com" required />
+                <button type="submit">Send My Free Sample →</button>
+            </form>
+            <p class="capture-disclaimer">No spam. Unsubscribe anytime. Get a complete B2B SaaS monthly calendar with 12+ content pieces.</p>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="container">
+        <p>AI Content Calendar Generator — Part of the AI Revenue Toolkit Bundle</p>
+        <p style="margin-top:8px;">© 2026 · Built for AI Automation Agencies</p>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.faq-question').forEach(q => {
+            q.addEventListener('click', () => {
+                q.parentElement.classList.toggle('open');
+            });
+        });
+    </script>
+</body>
+</html>
